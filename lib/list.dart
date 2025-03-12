@@ -11,6 +11,8 @@ import 'package:dio/dio.dart';
  * Description: 목록 조회
  */
 
+// StatelessWidget 상태가 없는 위젯으로, 생성 후에는 상태를 변경불가
+// 정적 UI요소 표시할 때 사용
 class PhoneAppList extends StatelessWidget {
   const PhoneAppList({super.key});
 
@@ -38,6 +40,8 @@ class PhoneAppList extends StatelessWidget {
 }
 
 // _PhoneAppList는 StatefulWidget을 상속받은 클래스
+// 상태가 있는 위젯으로, 생성 후에도 상태를 변경가능
+// 동적 UI요소 표시하거나 사용자 입력 처리때 사용
 class _PhoneAppList extends StatefulWidget {
   const _PhoneAppList({super.key});
 
