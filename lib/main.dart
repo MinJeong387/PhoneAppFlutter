@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:phone_app_flutter/list.dart';
+import 'package:phone_app_flutter/writeForm.dart';
 
 /**
  * phone_app_flutter
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         "/": (context) => PhoneAppList(),
-        //   "/write": (content) => WriteForm(),
+        "/write": (content) => WriteForm(),
         //   "/edit": (context) => EditForm(),
       },
     );
