@@ -17,6 +17,10 @@ class PhoneAppVo {
   String nickname;
   String memo;
 
+  // 잠시 추가
+  String title;
+  bool completed;
+
   // 생성자
   PhoneAppVo({
     required this.id,
@@ -25,6 +29,10 @@ class PhoneAppVo {
     required this.email,
     required this.nickname,
     required this.memo,
+
+    //  잠시 추가
+    required this.completed,
+    required this.title,
   });
 
   // fromJson 메서드는 JSON 데이터를 PhoneAppVo 객체로 변환하는 팩토리 메서드
@@ -36,6 +44,10 @@ class PhoneAppVo {
       email: apiData['email'],
       nickname: apiData['nickname'],
       memo: apiData['memo'],
+
+      //  잠시 추가
+      title: apiData['title'],
+      completed: apiData['completed'],
     );
   }
 
@@ -48,6 +60,9 @@ class PhoneAppVo {
       'email': email,
       'nickname': nickname,
       'memo': memo,
+
+      //  잠시 추가
+      'title': title, 'completed': completed,
     };
   }
 }

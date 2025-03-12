@@ -51,6 +51,8 @@ class _PhoneAppList extends StatefulWidget {
 
 // _PhoneAppListState는 _PhoneAppList의 상태를 관리하는 클래스
 class _PhoneAppListState extends State<_PhoneAppList> {
+  //  상수
+  static const String apiEndpoint = "";
   //  상태를 정의
   //  late : 선언시 할당하지 않고, 나중에 할당되는 변수
   late Future<List<PhoneAppVo>> phoneAppListFuture;
@@ -98,7 +100,82 @@ class _PhoneAppListState extends State<_PhoneAppList> {
         } else if (!snapshot.hasData) {
           return Center(child: Text("전화번호가 없습니다."));
         } else {
-          return Center(child: Text("데이터 수신 성공!!!!!!!!!!!!!!"));
+          // return Center(child: Text("데이터 수신 성공!!!!!!!!!!!!!!"));
+          // 성공적으로 데이터를 가져왔을 때, ListView를 사용하여 항목을 표시
+          // 각 항목은 Card로 감싸져 있으며, 완료 상태에 따라 배경색이 다르게 표시
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              return Card(
+                child: ListTile(
+                  tileColor:
+                      snapshot.data![index].completed
+                          ? Colors.blue
+                          : Colors.white,
+                  leading: Checkbox(
+                    value: snapshot.data![index].completed,
+                    onChanged: (bool? value) async {
+                      //  전송할 데이터
+                      PhoneAppVo item = snapshot.data![index];
+                      PhoneAppVo updatedItem =
+                          await togglePhoneAppItemCompleted(item);
+                      setState(() {
+                        snapshot.data![index] = updatedItem;
+                      });
+                    },
+                  ),
+                  title: Text(
+                    snapshot.data![index].title,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () async {
+                          //  수정 폼으로 이동
+                          await Navigator.pushNamed(
+                            context,
+                            "/edit",
+                            arguments: {
+                              "id": snapshot.data![index].id,
+                            }, //  수정 페이지로 넘길 데이터 (map)
+                          );
+                          setState(() {});
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () async {
+                          //  수정 폼으로 이동
+                          await Navigator.pushNamed(
+                            context,
+                            "/edit",
+                            arguments: {"id": snapshot.data![index].id},
+                          );
+                          setState(() {});
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () async {
+                          int deletedId = await deletePhoneAppItem(
+                            snapshot.data![index].id,
+                          );
+                          setState(() {
+                            snapshot.data!.removeWhere(
+                              (element) => element.id == deletedId,
+                            );
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
         }
       },
     );
@@ -140,6 +217,48 @@ class _PhoneAppListState extends State<_PhoneAppList> {
       }
     } catch (e) {
       throw Exception("전화번호 목록을 불러오는데 실패했습니다. : $e");
+    }
+  }
+
+  //  PhoneAppItem의 completed 필드를 toggle하는 함수
+  Future<PhoneAppVo> togglePhoneAppItemCompleted(PhoneAppVo item) async {
+    try {
+      //  completed 필드 반전
+      item.completed = !item.completed;
+
+      var dio = Dio(); //  초기화
+      dio.options.headers['Content-Type'] = "application/json";
+
+      //  데이터 갱신 : PUT
+      final response = await dio.put("", data: item.toJson());
+
+      if (response.statusCode == 200) {
+        print("completed 상태가 변경 되었습니다.");
+        return PhoneAppVo.fromJson(response.data);
+      } else {
+        throw Exception("API 서버 에러");
+      }
+    } catch (e) {
+      throw Exception("유저 상태 정보를 변경하는데 실패 했습니다.:$e");
+    }
+  }
+
+  //  PhoneAppItem을 삭제하는 함수
+  Future<int> deletePhoneAppItem(int id) async {
+    try {
+      var dio = Dio();
+      dio.options.headers['Content-Type'] = "application/json";
+
+      //  서버로 부터 DELETE 요청
+      final response = await dio.delete("");
+
+      if (response.statusCode == 200) {
+        return id;
+      } else {
+        throw Exception("API 서버 오류");
+      }
+    } catch (e) {
+      throw Exception("PhoneAppItem 삭제에 실패했습니다.:$e");
     }
   }
 }

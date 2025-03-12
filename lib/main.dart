@@ -26,12 +26,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      // home: const Placeholder(),
       initialRoute: "/",
       routes: {
         "/": (context) => PhoneAppList(),
         "/write": (content) => WriteForm(),
-        //   "/edit": (context) => EditForm(),
+        "/edit": (context) => EditForm(),
       },
     );
   }
